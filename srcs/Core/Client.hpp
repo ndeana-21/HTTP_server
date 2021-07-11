@@ -4,20 +4,26 @@
 #include "Server.hpp"
 #include "Struct.hpp"
 
-
+class Server;
 class Client
 {
-private:
-	struct sockaddr_in		addr_info;
-	time_t					time;
-	int						client_fd;
-public:
-	Client();
-	Client(const Client &copy);
-	Client &operator=(Client const &other);
-	virtual ~Client();
+	private:
+		struct sockaddr_in		addr_info;
+		time_t					time;
+		int						client_fd;
+	public:
+		Client();
+		Client(Server *serv, int fd, struct sockaddr_in addr_info);
+		Client(const Client &copy);
+		Client &operator=(Client const &other);
+		virtual ~Client();
 
-	time_t					get_time();
+		// Responce				_responce;
+		// Request					_request;
+
+		time_t					get_time();
+		int						get_fd();
+		void					init_client();
 };
 
 #endif

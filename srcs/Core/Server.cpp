@@ -6,61 +6,98 @@
 /*   By: gselyse <gselyse@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/28 17:12:23 by gselyse           #+#    #+#             */
-/*   Updated: 2021/07/04 16:54:04 by gselyse          ###   ########.fr       */
+/*   Updated: 2021/07/11 16:06:44 by gselyse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 Server::Server(){
-};
+	Server::init_server();
+}
 
-// void	Server::init_server(s_ipport ipport)
+Server::~Server(){}
+
 void	Server::init_server(){
-	// struct sockaddr addr;
-	if ((this->server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-		std::cout << "Error: created socket\n";
-		return ;
+	int bytes_read;
+	char buf[1024] = {'\0'};
+
+	this->server_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->server_fd < 0) {
+		perror("socket");
+		exit(1);
 	}
-	this->r = 0;
-	if ((r = setsockopt(this->server_fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&this->r, sizeof(this->r))) < 0){
-		std::cout << "Error: setsockopt() call failed\n";
-		return ;
+	fcntl(this->server_fd, F_SETFL, O_NONBLOCK); //делаем сокет неблокирующим
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(3425);
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	if (bind(this->server_fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
+		perror("bind");
+		exit(2);
 	}
-	std::cout << "Hello world";
-	memset(&serv_addr, '0', sizeof(serv_addr));
-	this->serv_addr.sin_family = AF_INET;
-	this->serv_addr.sin_addr.s_addr = INADDR_ANY;
-	this->serv_addr.sin_port = htons(5000);
-	if (bind(this->server_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0){
-		std::cout << "Error: bind\n";
-		return ;
+	listen(this->server_fd, 2);
+
+	std::set<int> clients;
+	clients.clear();
+
+	while (true) {
+		fd_set readset;
+		FD_ZERO(&readset);
+		FD_SET(this->server_fd, &readset);
+
+		for (std::set<int>::iterator it = clients.begin(); it != clients.end(); it++) {
+			FD_SET(*it, &readset);
+		}
+		timeval timeout;
+		timeout.tv_sec = 15;
+		timeout.tv_usec = 0;
+		int mx = std::max(this->server_fd, *std::max_element(clients.begin(), clients.end()));
+		if (select(mx + 1, &readset, NULL, NULL, &timeout) <= 0) {
+			perror("select");
+			exit(3);
+		}
+		if (FD_ISSET(this->server_fd, &readset)) { 
+			int sock = accept(this->server_fd, NULL, NULL); 	//получили новый запрос на соединение, подтверждаем
+			if (sock < 0) {
+				perror("accept");
+				exit(4);
+			}
+			fcntl(sock, F_SETFL, O_NONBLOCK);
+			clients.insert(sock);
+		}
+		for (std::set<int>::iterator it = clients.begin(); it != clients.end();) {
+			if (FD_ISSET(*it, &readset)) { 
+				bytes_read = recv(*it, buf, 1024, 0); 	//получили данные от клиента, читаем их
+				if (bytes_read <= 0) {
+					close(*it);							//соединение разорвано, закрываем
+					clients.erase(it++);
+					continue;
+				}
+				else {
+					std::cout << buf << "\n";
+					send(*it, buf, bytes_read, 0);
+				}
+				
+			}
+			++it;
+		}
 	}
-	if (listen(this->server_fd, 4096) < 0){
-		std::cout << "Error: listen\n";
-		return ;
-	}
-	int connfd = 0;
-	time_t tims;
-	while (1){
-		connfd = accept(this->server_fd, (struct sockaddr *)NULL, NULL);
-		// tims = time(NULL);
-		close(connfd);
-		sleep(10000);
-	}
+	return ;
 }
 
-time_t		Server::get_time(){
-	return this->time;
-}
-
-// int		main(){
-// 	int sock_fd;
-// 	s_ipport ipport;
-// 	Server *tmp = NULL;
-// 	// Server();
-// 	// Server();
-// 	tmp->init_server();
-// 	std::cout << "Hello\n";
-// 	return 0;
+// time_t		Server::get_time(){
+// 	return this->time;
 // }
+
+// void	Server::close_socket(int fd){
+// 	close(fd);
+// // if (req.find(fd) != req.end(){
+// // 		req.erase(fd);
+// //		std::cout << "request deleted";
+// }
+
+int		main(){
+	Server();
+	return 0;
+}

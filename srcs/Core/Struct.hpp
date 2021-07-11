@@ -2,6 +2,9 @@
 # define STRUCT_HPP
 
 #include "Server.hpp"
+#include "Client.hpp"
+#include "Responce.hpp"
+#include "Request.hpp"
 
 // struct s_request_header {
 //     size_t                 error; 

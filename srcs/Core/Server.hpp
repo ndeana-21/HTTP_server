@@ -10,11 +10,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <iostream>
+#include <set>
+#include <map>
+#include <algorithm>
 
 #include "Struct.hpp"
 #include "Client.hpp"
 
-class Clien;
+class Client;
 
 class Server
 {
@@ -23,7 +26,6 @@ class Server
 		// typedef struct s_ipport		ipport;
 		std::string					server_name;
 		int							server_fd;
-		int							r;
 		time_t						time;
 	public:
 		Server();
@@ -32,10 +34,11 @@ class Server
 
 		// void	init_server(struct s_ipport ipport);
 		void	init_server();
+		// void	set_Addr();
+		// void	close_socket();
 		time_t	get_time();
+		void	close_socket();
+
 };
-
-
-
 
 #endif
