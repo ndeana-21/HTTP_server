@@ -6,7 +6,7 @@
 /*   By: gselyse <gselyse@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/28 17:12:23 by gselyse           #+#    #+#             */
-/*   Updated: 2021/07/11 19:27:15 by gselyse          ###   ########.fr       */
+/*   Updated: 2021/07/11 20:29:04 by gselyse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ void	Server::init_server(){
 		}
 		for (std::set<int>::iterator it = clients.begin(); it != clients.end();) { //socket_read + request
 			if (FD_ISSET(*it, &readset)) { 
-				bytes_read = recv(*it, buf, 1024, 0); 	//получили данные от клиента, читаем их
+				// bytes_read = recv(*it, buf, 1024, 0);
+				bytes_read = read_socket();	//получили данные от клиента, читаем их
 				if (bytes_read <= 0) {
 					close(*it);							//соединение разорвано, закрываем
 					clients.erase(it++);
@@ -125,9 +126,23 @@ int		Server::accept_client(){
 	return new_fd;
 }
 
-// int		Server::read_socket(){
-	
-// }
+int		Server::read_socket(){
+	int res;
+	char buf[1024];
+
+	res = recv(this->server_fd, buf, 1024, 0);
+	if (res > 0){
+		//request
+		//responce
+	}
+	else if (res < 0){
+		std::cout << "Error: Reading" << std::endl;
+	}
+	else
+		std::cout << "Closed socket" << std::endl;
+	this->close_socket(this->server_fd);
+	return 0;
+}
 
 int		Server::get_fd(){
 	return this->server_fd;
@@ -137,12 +152,12 @@ int		Server::get_fd(){
 // 	return this->time;
 // }
 
-// void	Server::close_socket(int fd){
-// 	close(fd);
-// // if (req.find(fd) != req.end(){
-// // 		req.erase(fd);
-// //		std::cout << "request deleted";
-// }
+void	Server::close_socket(int fd){
+	close(fd);
+// if (req.find(fd) != req.end(){
+// 		req.erase(fd);
+//		std::cout << "request deleted";
+}
 
 int		main(){
 	Server();

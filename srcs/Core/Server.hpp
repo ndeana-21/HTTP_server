@@ -43,7 +43,7 @@ class Server
 		// void	set_Addr();
 		// void	close_socket();
 		time_t	get_time();
-		void	close_socket();
+		void	close_socket(int fd);
 
 };
 
