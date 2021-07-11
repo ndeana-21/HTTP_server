@@ -6,7 +6,7 @@
 /*   By: gselyse <gselyse@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/28 17:12:23 by gselyse           #+#    #+#             */
-/*   Updated: 2021/07/11 19:15:12 by gselyse          ###   ########.fr       */
+/*   Updated: 2021/07/11 19:27:15 by gselyse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	Server::init_server(){
 	// 	FD_ZERO(&this->readset);
 	// 	FD_ZERO(&this->writeset);
 	// }
-
+	std::set<int> servers;
 	std::set<int> clients;
 	clients.clear();
 
@@ -73,9 +73,11 @@ void	Server::init_server(){
 		int mx = std::max(this->server_fd, *std::max_element(clients.begin(), clients.end()));
 		if (select(mx + 1, &readset, NULL, NULL, &timeout) < 0) {
 			perror("select");
+			clients.clear();
 			exit(3);
 		}
-		if (FD_ISSET(this->server_fd, &readset))
+		for (std::set<int>::iterator it = servers.begin(); it != servers.end(); it++){
+			if (FD_ISSET(this->server_fd, &readset))
 			// int sock = accept(this->server_fd, NULL, NULL); 	//получили новый запрос на соединение, подтверждаем
 			// if (sock < 0) {
 			// 	perror("accept");
@@ -83,9 +85,11 @@ void	Server::init_server(){
 			// }
 			// fcntl(sock, F_SETFL, O_NONBLOCK);
 			// clients.insert(sock);
-			int sock = accept_client();
+				int sock = accept_client();
+				break ;
+			}	
 		}
-		for (std::set<int>::iterator it = clients.begin(); it != clients.end();) {
+		for (std::set<int>::iterator it = clients.begin(); it != clients.end();) { //socket_read + request
 			if (FD_ISSET(*it, &readset)) { 
 				bytes_read = recv(*it, buf, 1024, 0); 	//получили данные от клиента, читаем их
 				if (bytes_read <= 0) {
