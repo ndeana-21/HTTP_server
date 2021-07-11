@@ -26,7 +26,9 @@ class Server
 		// typedef struct s_ipport		ipport;
 		std::string					server_name;
 		int							server_fd;
-		time_t						time;
+		fd_set						readset;
+		fd_set						writeset;
+		// time_t						time;
 	public:
 		Server();
 		Server(Server const &copy);
@@ -34,6 +36,10 @@ class Server
 
 		// void	init_server(struct s_ipport ipport);
 		void	init_server();
+		int		accept_client();
+		int		read_socket();
+		// int		write_socket();
+		int		get_fd();
 		// void	set_Addr();
 		// void	close_socket();
 		time_t	get_time();
