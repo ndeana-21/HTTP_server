@@ -6,7 +6,7 @@
 /*   By: gselyse <gselyse@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/28 17:12:23 by gselyse           #+#    #+#             */
-/*   Updated: 2021/07/12 18:06:47 by gselyse          ###   ########.fr       */
+/*   Updated: 2021/07/12 21:17:09 by gselyse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,10 @@ void		Server::run_server(){
 	char buf[1024] = {'\0'};
 	std::set<int> servers;
 	std::set<int> clients;
-	clients.clear();
+	// clients.clear();
 
 	while (true) {
+		// std::cout << "Hello server" << std::endl;
 		fd_set readset;
 		FD_ZERO(&readset);
 		FD_SET(this->server_fd, &readset);
@@ -85,20 +86,15 @@ void		Server::run_server(){
 			exit(3);
 		}
 		for (std::set<int>::iterator it = servers.begin(); it != servers.end(); it++){
-			if (FD_ISSET(this->server_fd, &readset))
-			// int sock = accept(this->server_fd, NULL, NULL); 	//получили новый запрос на соединение, подтверждаем
-			// if (sock < 0) {
-			// 	perror("accept");
-			// 	exit(4);
-			// }
-			// fcntl(sock, F_SETFL, O_NONBLOCK);
-			// clients.insert(sock);
+			if (FD_ISSET(this->server_fd, &readset)){
 				int sock = accept_client();
+				clients.insert(sock);
 				break ;
-			}	
+			}
 		}
 		for (std::set<int>::iterator it = clients.begin(); it != clients.end();) { //socket_read + request
 			if (FD_ISSET(*it, &readset)) { 
+				std::cout << "Connection" << std::endl;
 				// bytes_read = recv(*it, buf, 1024, 0);
 				bytes_read = read_socket();	//получили данные от клиента, читаем их
 				if (bytes_read <= 0) {
@@ -109,11 +105,14 @@ void		Server::run_server(){
 				else {
 					std::cout << buf << "\n";
 					send(*it, buf, bytes_read, 0);
+					break ;
 				}
 				
 			}
 			++it;
 		}
+	}
+	std::cout << "Connection" << std::endl;
 	return ;
 }
 

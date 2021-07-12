@@ -28,7 +28,7 @@ class Server
 		// typedef struct s_ipport		ipport;
 		std::string					server_name;
 		int							server_fd;
-		// Request					_request;
+		Request						req
 		// Responce					_responce;
 		// std::map<int, Client*>		clients;
 		fd_set						readset;
