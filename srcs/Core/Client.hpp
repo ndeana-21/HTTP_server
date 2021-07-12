@@ -18,8 +18,10 @@ class Client
 		Client &operator=(Client const &other);
 		virtual ~Client();
 
-		// Responce				_responce;
-		// Request					_request;
+		// Responce				*_responce;
+		// Request				*_request;
+		Server					*_server;	
+
 
 		time_t					get_time();
 		int						get_fd();

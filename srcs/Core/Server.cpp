@@ -6,22 +6,34 @@
 /*   By: gselyse <gselyse@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/28 17:12:23 by gselyse           #+#    #+#             */
-/*   Updated: 2021/07/11 20:29:04 by gselyse          ###   ########.fr       */
+/*   Updated: 2021/07/12 18:06:47 by gselyse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 Server::Server(){
-	Server::init_server();
+	Server::setup_server();
+	// Server::accept_client();
+	Server::run_server();
+}
+
+Server::Server(Server const &copy){
+	*this = copy;
 }
 
 Server::~Server(){}
 
-void	Server::init_server(){
-	int bytes_read;
-	char buf[1024] = {'\0'};
+int		Server::get_fd(){
+	return this->server_fd;
+}
 
+std::string		Server::get_name(){
+	return this->server_name;
+}
+
+
+void	Server::setup_server(){
 	this->server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->server_fd < 0) {
 		perror("socket");
@@ -46,15 +58,11 @@ void	Server::init_server(){
 		close(this->server_fd);
 		exit(1);
 	}
-	// this->accept_client();
-	// int res, max_fd = 0;
-	// struct timeval timeout;
-	// timeout.tv_sec = 1;
-	// timeout.tv_usec = 0;
-	// for (;;){
-	// 	FD_ZERO(&this->readset);
-	// 	FD_ZERO(&this->writeset);
-	// }
+}
+
+void		Server::run_server(){
+	int bytes_read;
+	char buf[1024] = {'\0'};
 	std::set<int> servers;
 	std::set<int> clients;
 	clients.clear();
@@ -142,10 +150,6 @@ int		Server::read_socket(){
 		std::cout << "Closed socket" << std::endl;
 	this->close_socket(this->server_fd);
 	return 0;
-}
-
-int		Server::get_fd(){
-	return this->server_fd;
 }
 
 // time_t		Server::get_time(){
