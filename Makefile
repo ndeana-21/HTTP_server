@@ -1,43 +1,39 @@
 NAME		=	webserv
-DIR			=	srcs
+DIR			=	src
+HEAD_DIR	=	include
 
-FILES		=	main.cpp					\
-				Config/ServerConfig.cpp		\
-				Config/RequestConfig.cpp	\
-				Config/InputArgs.cpp		\
-				Config/Config.cpp			\
-				HTTP/Server.cpp				\
-				HTTP/Response.cpp			\
-				HTTP/Request.cpp			\
-				HTTP/Client.cpp				\
-				HTTP/CGI.cpp				\
-				Utils/Utils.cpp				\
-				Utils/StringUtils.cpp		\
-				Utils/StatusCode.cpp		\
-				Utils/MimeTypes.cpp			\
-				Utils/Logger.cpp			\
-				Utils/get_next_line.cpp		\
-				Utils/File.cpp				\
+FILES		=								\
+				main.cpp             		\
+				Webserv.cpp  				\
+				Server.cpp               	\
+				Response.cpp  				\
+				CGI.cpp						\
+				time.cpp     				\
+				ServerConfiguration.cpp  	\
+				Request.cpp   				\
+				file.cpp              		\
+				AutoIndex.cpp				\
+				string.cpp   				\
+				Route.cpp               	\
+				quit.cpp      				\
+				ConnexionManager.cpp
 
-HEAD_FILES	=	includes/Config/ServerConfig.hpp	\
-				includes/Config/RequestConfig.hpp	\
-				# includes/Config/InputArgs.hpp		\#
-				includes/Config/Config.hpp			\
-				includes/HTTP/Server.hpp			\
-				includes/HTTP/Response.hpp			\
-				includes/HTTP/Request.hpp			\
-				includes/HTTP/Client.hpp			\
-				includes/HTTP/CGI.hpp				\
-				includes/Utils/Utils.hpp			\
-				includes/Utils/StringUtils.hpp		\
-				includes/Utils/StatusCode.hpp		\
-				includes/Utils/MimeTypes.hpp		\
-				includes/Utils/Logger.hpp			\
-				includes/Utils/get_next_line.hpp	\
-				includes/Utils/File.hpp				\
+HEAD_FILES	=								\
+				Webserv.hpp					\
+				ServerConfiguration.hpp		\
+				Response.hpp  				\
+				include.hpp  				\
+				ConnexionManager.hpp  		\
+				AutoIndex.hpp				\
+				Server.hpp   				\
+				Route.hpp                	\
+				Request.hpp   				\
+				Console.hpp  				\
+				CGI.hpp
 
 SRCS		=	$(addprefix $(DIR)/, $(FILES))
-INCLUDES	=	-I includes/Config -I includes/Utils -I includes/HTTP
+HEADS		=	$(addprefix $(HEAD_DIR)/, $(HEAD_FILES))
+INCLUDES	=	-I $(HEAD_DIR)
 OBJS		=	$(SRCS:.cpp=.o)
 
 M_FLAGS		=	--no-print-directory
@@ -46,7 +42,7 @@ CFLAGS		=	-Wall -Wextra -Werror -std=c++98 -pthread -g -O0 $(INCLUDES)
 
 all: $(NAME)
 
-%.o: %.cpp $(HEAD_FILES)
+%.o: %.cpp $(HEADS)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@$(PRINT) "\n$(FGREEN)COMPILE: $<                   $(PNULL)"
 
