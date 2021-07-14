@@ -25,12 +25,12 @@
 # include "MimeTypes.hpp"
 
 struct auto_listing {
-  std::string name_;
-  bool is_dir_;
-  std::string date_;
-  size_t size_;
+	std::string name_;
+	bool is_dir_;
+	std::string date_;
+	size_t size_;
 
-  auto_listing() : is_dir_(false) {};
+	auto_listing() : is_dir_(false) {};
 };
 
 

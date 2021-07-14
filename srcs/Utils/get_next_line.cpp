@@ -80,13 +80,13 @@ static int		handle_line(char *s[], int fd)
 		free(tmp);
 	}
 	else if (strlen(s[fd]) > 0) {
-    free(s[fd]);
-    s[fd] = NULL;
-  }
+		free(s[fd]);
+		s[fd] = NULL;
+	}
 	else
 	{
-    free(s[fd]);
-    s[fd] = NULL;
+		free(s[fd]);
+		s[fd] = NULL;
 		return (0);
 	}
 	return (1);

@@ -36,39 +36,39 @@ class Client;
 
 class Server {
  public:
-  // Constructors & Deconstructors
-  Server(const Server &copy);
-  Server(std::vector<ServerConfig> &servers, InputArgs &options);
-  ~Server();
-  Server &operator=(const Server &copy);
+	// Constructors & Deconstructors
+	Server(const Server &copy);
+	Server(std::vector<ServerConfig> &servers, InputArgs &options);
+	~Server();
+	Server &operator=(const Server &copy);
 
-  void setup();
-  void run(int worker_id = 0);
+	void setup();
+	void run(int worker_id = 0);
 
-  bool recv(int fd);
-  bool send(int fd);
-  bool createWorker();
-  void newConnection(int fd);
-  void clientDisconnect(int fd);
-  void closeClient(int fd);
-  void add_to_fd_set(int fd);
-  void remove_from_fd_set(int fd);
-  void check_timeout_disconnect(Client *client);
+	bool recv(int fd);
+	bool send(int fd);
+	bool createWorker();
+	void newConnection(int fd);
+	void clientDisconnect(int fd);
+	void closeClient(int fd);
+	void add_to_fd_set(int fd);
+	void remove_from_fd_set(int fd);
+	void check_timeout_disconnect(Client *client);
 
-  static bool running_;
-  int worker_id_;
+	static bool running_;
+	int worker_id_;
 
  private:
-  std::vector<ServerConfig> &servers_;
-  InputArgs &options_;
-  std::map<int, Listen> running_server_;
-  std::map<int, Client*> clients_;
-  fd_set master_fds_;
-  fd_set read_fds_;
-  fd_set write_fds_;
-  std::list<int> fd_set_;
-  int max_fd_;
-  std::string head_;
+	std::vector<ServerConfig> &servers_;
+	InputArgs &options_;
+	std::map<int, Listen> running_server_;
+	std::map<int, Client*> clients_;
+	fd_set master_fds_;
+	fd_set read_fds_;
+	fd_set write_fds_;
+	std::list<int> fd_set_;
+	int max_fd_;
+	std::string head_;
 };
 
 #endif

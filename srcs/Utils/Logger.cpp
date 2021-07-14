@@ -3,36 +3,36 @@
 Logger::Logger(){};
 
 void Logger::setLogLevel(LogLevel level) {
-  level_ = level;
+	level_ = level;
 }
 
 LogLevel Logger::getLogLevel() {
-  return level_;
+	return level_;
 }
 
 void Logger::print(LogLevel level, std::string str, std::string color, bool error) {
-  (void)error;
-  if (level <= level_) {
-    struct tm	*tm;
-    time_t rawtime;
-    char buf[32];
+	(void)error;
+	if (level <= level_) {
+		struct tm	*tm;
+		time_t rawtime;
+		char buf[32];
 
-    time(&rawtime);
-    tm = localtime (&rawtime);
-    int ret = strftime(buf, 32, "%T", tm);
-    buf[ret] = '\0';
+		time(&rawtime);
+		tm = localtime (&rawtime);
+		int ret = strftime(buf, 32, "%T", tm);
+		buf[ret] = '\0';
 
-    pthread_mutex_lock(&g_write);
+		pthread_mutex_lock(&g_write);
 
-    if (error) {
-      std::cerr << CYAN << "[" << buf << "] " << RESET;
-      std::cerr << color << str << RESET;
-      std::cerr << "\n";
-    } else {
-      std::cout << CYAN << "[" << buf << "] " << RESET;
-      std::cout << color << str << RESET;
-      std::cout << "\n";
-    }
-    pthread_mutex_unlock(&g_write);
-  }
+		if (error) {
+			std::cerr << CYAN << "[" << buf << "] " << RESET;
+			std::cerr << color << str << RESET;
+			std::cerr << "\n";
+		} else {
+			std::cout << CYAN << "[" << buf << "] " << RESET;
+			std::cout << color << str << RESET;
+			std::cout << "\n";
+		}
+		pthread_mutex_unlock(&g_write);
+	}
 };

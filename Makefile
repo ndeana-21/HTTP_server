@@ -18,11 +18,10 @@ FILES		=	main.cpp					\
 				Utils/Logger.cpp			\
 				Utils/get_next_line.cpp		\
 				Utils/File.cpp				\
-				Utils/Base64.cpp
 
 HEAD_FILES	=	includes/Config/ServerConfig.hpp	\
 				includes/Config/RequestConfig.hpp	\
-				includes/Config/InputArgs.hpp		\
+				# includes/Config/InputArgs.hpp		\#
 				includes/Config/Config.hpp			\
 				includes/HTTP/Server.hpp			\
 				includes/HTTP/Response.hpp			\
@@ -36,7 +35,6 @@ HEAD_FILES	=	includes/Config/ServerConfig.hpp	\
 				includes/Utils/Logger.hpp			\
 				includes/Utils/get_next_line.hpp	\
 				includes/Utils/File.hpp				\
-				includes/Utils/Base64.hpp
 
 SRCS		=	$(addprefix $(DIR)/, $(FILES))
 INCLUDES	=	-I includes/Config -I includes/Utils -I includes/HTTP
