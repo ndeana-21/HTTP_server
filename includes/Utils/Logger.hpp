@@ -1,9 +1,7 @@
 #ifndef LOGGER_HPP
 # define LOGGER_HPP
 
-# include <iostream>
-# include <map>
-# include <string>
+#include "Define.hpp"
 
 # define RESET   "\033[0m"
 # define BLACK   "\033[30m"

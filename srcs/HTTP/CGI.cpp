@@ -31,7 +31,7 @@ void CGI::init(int worker_id) {
   }
   std::string cgi_path = "/tmp/webserv_cgi_tmp_" + ft::to_string(worker_id);
   tmp_file_.set_path(cgi_path.c_str());
-  tmp_file_.open(true);
+  tmp_file_.opens(true);
   if (worker_id)
     Log.print(DEBUG, "worker[" + ft::to_string(worker_id) + "] : CGI -> " + cgi_path_);
   else
@@ -43,7 +43,7 @@ CGI::~CGI() {
   free(argv_[1]);
   if (env_)
     ft::free_tab(env_);
-  tmp_file_.close();
+  tmp_file_.close_fd();
   tmp_file_.unlink();
 }
 

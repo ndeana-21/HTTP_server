@@ -7,7 +7,7 @@ File::File(std::string path) : fd_(0) {
 }
 
 File::~File() {
-  close();
+  close_fd();
 }
 
 void File::set_path(std::string path, bool negociation) {
@@ -19,26 +19,26 @@ void File::set_path(std::string path, bool negociation) {
     parseExtensions();
 }
 
-bool File::open(bool create) {
-  close();
+bool File::opens(bool create) {
+  close_fd();
 
   if (create)
-    fd_ = ::open(path_.c_str(), O_CREAT | O_RDWR | O_TRUNC, 00755);
+    fd_ = open(path_.c_str(), O_CREAT | O_RDWR | O_TRUNC, 00755);
   else
-    fd_ = ::open(path_.c_str(), O_RDONLY);
+    fd_ = open(path_.c_str(), O_RDONLY);
   return fd_ > 0;
 }
 
-void File::close() {
+void File::close_fd() {
   if (fd_ <= 0)
     return ;
 
-  ::close(fd_);
+  close(fd_);
   fd_ = 0;
 }
 
 void File::create(std::string &body) {
-  if (!open(true)) {
+  if (!opens(true)) {
     Log.print(DEBUG, "create : " + std::string(strerror(errno)) + " of " + path_, RED, true);
     return ;
   }
@@ -47,7 +47,7 @@ void File::create(std::string &body) {
 }
 
 void File::append(std::string &body) {
-  close();
+  close_fd();
   fd_ = ::open(path_.c_str(), O_RDWR | O_APPEND);
   if (fd_ < 0)
     return ;

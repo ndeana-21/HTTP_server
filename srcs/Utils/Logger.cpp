@@ -1,7 +1,6 @@
 # include "Logger.hpp"
 
-Logger::Logger() {
-};
+Logger::Logger(){};
 
 void Logger::setLogLevel(LogLevel level) {
   level_ = level;

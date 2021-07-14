@@ -1,6 +1,9 @@
 {
 	"files.associations": {
+<<<<<<< HEAD
 		"ctime": "cpp",
+=======
+>>>>>>> gselyse
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
@@ -13,12 +16,18 @@
 		"cstdint": "cpp",
 		"cstdio": "cpp",
 		"cstdlib": "cpp",
+<<<<<<< HEAD
 		"cstring": "cpp",
+=======
+>>>>>>> gselyse
 		"cwchar": "cpp",
 		"cwctype": "cpp",
 		"deque": "cpp",
 		"list": "cpp",
+<<<<<<< HEAD
 		"map": "cpp",
+=======
+>>>>>>> gselyse
 		"unordered_map": "cpp",
 		"vector": "cpp",
 		"exception": "cpp",

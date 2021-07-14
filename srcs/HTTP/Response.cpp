@@ -52,7 +52,7 @@ bool Response::checkAuth() {
   if (config_.getHeader("Authorization").empty())
     return false;
   std::string auth_cred = config_.getHeader("Authorization");
-  std::string token = ft::b64decode(auth_cred.substr(auth_cred.find(' ') + 1));
+  std::string token = auth_cred.substr(auth_cred.find(' ') + 1);
   return (token == config_.getAuth());
 }
 
@@ -162,7 +162,7 @@ int Response::handleMethods() {
         file_.set_path(path.substr(0, path.find_last_of("/") + 1) + matches.front(), true);
       }
 
-      if (!file_.open())
+      if (!file_.opens())
         return 403;
 
       headers_["Last-Modified"] = file_.last_modified();

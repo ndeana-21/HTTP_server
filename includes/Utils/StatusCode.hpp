@@ -1,8 +1,7 @@
 #ifndef STATUSCODE_HPP
 # define STATUSCODE_HPP
 
-# include <map>
-# include <string>
+#include "Define.hpp"
 
 class StatusCode {
  public:
