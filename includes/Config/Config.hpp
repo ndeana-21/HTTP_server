@@ -13,29 +13,29 @@
 # include "StringUtils.hpp"
 # include "Utils.hpp"
 
-class Config {
- public:
-  Config(std::string &path);
-  ~Config();
+class Config
+{
+	public:
+		Config(std::string &path);
+		~Config();
 
-  void tokenize();
-  void parse();
-  void clear();
+		void parse();
+		void clear();
 
-  std::vector<ServerConfig> &getServers();
-  std::string &getPath();
+		std::vector<ServerConfig> &getServers() {return servers_;};
+		std::string &getFileContent() {return file_content_;};
+		std::string &getPath() {return path_;};
+		int getWorkers() {return workers_;};
 
-  int getWorkers();
+	private:
+		std::string path_;
+		int fd_;
 
-  std::string &getFileContent();
+		int workers_;
 
- private:
-  std::string path_;
-  int fd_;
-
-  int workers_;
-
-  std::string file_content_;
-  std::vector<std::string> tokens_;
-  std::vector<ServerConfig> servers_;
+		std::string file_content_;
+		std::vector<std::string> tokens_;
+		std::vector<ServerConfig> servers_;
+		
+		void tokenize();
 };

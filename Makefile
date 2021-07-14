@@ -1,24 +1,54 @@
 NAME		=	webserv
-DIR			=	src
-HEAD_DIR	=	includes
+DIR			=	srcs
 
-FILES		=	main.cpp	parser.cpp		server.cpp
-				
+FILES		=	main.cpp					\
+				Config/ServerConfig.cpp		\
+				Config/RequestConfig.cpp	\
+				Config/InputArgs.cpp		\
+				Config/Config.cpp			\
+				HTTP/Server.cpp				\
+				HTTP/Response.cpp			\
+				HTTP/Request.cpp			\
+				HTTP/Client.cpp				\
+				HTTP/CGI.cpp				\
+				Utils/Utils.cpp				\
+				Utils/StringUtils.cpp		\
+				Utils/StatusCode.cpp		\
+				Utils/MimeTypes.cpp			\
+				Utils/Logger.cpp			\
+				Utils/get_next_line.cpp		\
+				Utils/File.cpp				\
+				Utils/Base64.cpp
 
-HEAD_FILE	=	structures.hpp	server.hpp
+HEAD_FILES	=	includes/Config/ServerConfig.hpp	\
+				includes/Config/RequestConfig.hpp	\
+				includes/Config/InputArgs.hpp		\
+				includes/Config/Config.hpp			\
+				includes/HTTP/Server.hpp			\
+				includes/HTTP/Response.hpp			\
+				includes/HTTP/Request.hpp			\
+				includes/HTTP/Client.hpp			\
+				includes/HTTP/CGI.hpp				\
+				includes/Utils/Utils.hpp			\
+				includes/Utils/StringUtils.hpp		\
+				includes/Utils/StatusCode.hpp		\
+				includes/Utils/MimeTypes.hpp		\
+				includes/Utils/Logger.hpp			\
+				includes/Utils/get_next_line.hpp	\
+				includes/Utils/File.hpp				\
+				includes/Utils/Base64.hpp
 
 SRCS		=	$(addprefix $(DIR)/, $(FILES))
-HEADERS		=	$(addprefix $(HEAD_DIR)/, $(HEAD_FILE)) tests/tests.hpp
-INCLUDES	=	-I$(HEAD_DIR)
+INCLUDES	=	-I includes/Config -I includes/Utils -I includes/HTTP
 OBJS		=	$(SRCS:.cpp=.o)
 
 M_FLAGS		=	--no-print-directory
 CC			=	clang++
-CFLAGS		=	-Wall -Wextra -Werror -std=c++98 -g -O0 $(INCLUDES) 
+CFLAGS		=	-Wall -Wextra -Werror -std=c++98 -pthread -g -O0 $(INCLUDES) 
 
 all: $(NAME)
 
-%.o: %.cpp $(HEADERS)
+%.o: %.cpp $(HEAD_FILES)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@$(PRINT) "\n$(FGREEN)COMPILE: $<                   $(PNULL)"
 
