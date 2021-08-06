@@ -1,71 +1,86 @@
-NAME		=	webserv
-DIR			=	src
-HEAD_DIR	=	include
+NAME = webserv
 
-FILES		=								\
-				main.cpp             		\
-				Webserv.cpp  				\
-				Server.cpp               	\
-				Response.cpp  				\
-				CGI.cpp						\
-				time.cpp     				\
-				ServerConfiguration.cpp  	\
-				Request.cpp   				\
-				file.cpp              		\
-				AutoIndex.cpp				\
-				string.cpp   				\
-				Route.cpp               	\
-				quit.cpp      				\
-				ConnexionManager.cpp
+SRCS_DIR = ./srcs
 
-HEAD_FILES	=								\
-				Webserv.hpp					\
-				ServerConfiguration.hpp		\
-				Response.hpp  				\
-				include.hpp  				\
-				ConnexionManager.hpp  		\
-				AutoIndex.hpp				\
-				Server.hpp   				\
-				Route.hpp                	\
-				Request.hpp   				\
-				Console.hpp  				\
-				CGI.hpp
+SRCS_MAIN_DIR = .
+SRCS_MAIN = main.cpp
 
-SRCS		=	$(addprefix $(DIR)/, $(FILES))
-HEADS		=	$(addprefix $(HEAD_DIR)/, $(HEAD_FILES))
-INCLUDES	=	-I $(HEAD_DIR)
-OBJS		=	$(SRCS:.cpp=.o)
+SRCS_PARSER_DIR = parser
+SRCS_PARSER =   Request.cpp\
+				Response.cpp\
+				Server.cpp\
+				Location.cpp\
+				Base.cpp
 
-M_FLAGS		=	--no-print-directory
-CC			=	clang++
-CFLAGS		=	-Wall -Wextra -Werror -std=c++98 -pthread -g -O0 $(INCLUDES) 
+SRCS_SERVER_DIR = server
+SRCS_SERVER =   Manager.cpp\
+                Client.cpp \
+                Cgi.cpp
 
-all: $(NAME)
+SRCS_UTILS_DIR = utils
+SRCS_UTILS	=   Base64.cpp\
+				Data.cpp\
+				HttpStatusCode.cpp\
+                utils.cpp
 
-%.o: %.cpp $(HEADS)
-	@$(CC) $(CFLAGS) -c $< -o $@
+SRCS 		=	$(addprefix $(SRCS_MAIN_DIR)/, $(SRCS_MAIN))\
+				$(addprefix $(SRCS_PARSER_DIR)/, $(SRCS_PARSER))\
+				$(addprefix $(SRCS_SERVER_DIR)/, $(SRCS_SERVER))\
+				$(addprefix $(SRCS_UTILS_DIR)/, $(SRCS_UTILS))
+
+RES_SRCS 	= $(addprefix $(SRCS_DIR)/, $(SRCS))
+
+BUILD_DIR 	= ./build_dir
+OBJS 		= $(addprefix $(BUILD_DIR)/, $(SRCS:.cpp=.o))
+DEPS 		= $(addprefix $(BUILD_DIR)/, $(SRCS:.cpp=.d))
+
+COMPILER	= clang++
+INCLUDES	= -Iincludes
+FLAGS		= -Wall -Werror -Wextra -std=c++98 -O3
+M_FLAGS		= --no-print-directory
+
+$(BUILD_DIR)/%.o : $(SRCS_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	@$(COMPILER) $(FLAGS) $(INCLUDES) -MMD -c $< -o $@
 	@$(PRINT) "\n$(FGREEN)COMPILE: $<                   $(PNULL)"
 
+all:
+	@$(MAKE) $(M_FLAGS) $(NAME) -j
 
 $(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(NAME)
+	@$(COMPILER) $(FLAGS) $(OBJS) -o $(NAME)
 	@$(PRINT) "\n$(FGREEN)MAKE: ${NAME}                 $(PNULL)\n"
 
 clean:
-	@$(PRINT) "$(addprefix \n$(FRED)REMOVE: $(FYELLOW), $(OBJS))$(PNULL)"
 	@rm -f $(OBJS)
+	@$(PRINT) "$(addprefix \n$(FRED)REMOVE: $(FYELLOW), $(OBJS))$(PNULL)"
+	@rm -f $(DEPS)
+	@$(PRINT) "$(addprefix \n$(FRED)REMOVE: $(FYELLOW), $(DEPS))$(PNULL)"
+	@rm -rf $(BUILD_DIR)
+	@$(PRINT) "$(addprefix \n$(FRED)REMOVE: $(FYELLOW), $(BUILD_DIR))$(PNULL)"
 
-fclean: clean
-	@$(PRINT) "\n$(FRED)REMOVE: $(FYELLOW)$(NAME)$(PNULL)"
+fclean:
+	$(MAKE) $(M_FLAGS) clean
 	@rm -f $(NAME)
+	@$(PRINT) "\n$(FRED)REMOVE: $(FYELLOW)$(NAME)$(PNULL)"
 
-re:	fclean all
+re:
+	$(MAKE) $(M_FLAGS) fclean
+	$(MAKE) $(M_FLAGS) all
 
-run: all
-	@./$(NAME)
+sanitizer:
+	$(MAKE) $(M_FLAGS) fclean
+	$(COMPILER) $(FLAGS) $(INCLUDES) -fsanitize=address -g3 $(RES_SRCS) -o $(NAME)
+	ASAN_OPTIONS=detect_leaks=1 ./$(NAME)
 
+valgrind:
+	$(MAKE) $(M_FLAGS) re
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(NAME)
 
-.PHONY: all clean fclean re run lib
+.PHONY: all clean fclean re
+
+-include $(DEPS)
+
 
 # **************************************************************************** #
 #								Utilits										   #
